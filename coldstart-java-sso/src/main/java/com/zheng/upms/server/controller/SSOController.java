@@ -67,15 +67,6 @@ public class SSOController extends BaseController {
     UpmsSessionDao upmsSessionDao;
 
 
-
-    @RequestMapping(value = "/hello", method = RequestMethod.GET)
-    @ResponseBody
-    public Object hello() {
-        return new UpmsResult(UpmsResultConstant.SUCCESS, "hello spring mvc");
-    }
-
-
-
     @ApiOperation(value = "认证中心首页")
     @RequestMapping(value = "/index", method = RequestMethod.GET)
     public String index(HttpServletRequest request) throws Exception {
