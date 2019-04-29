@@ -1,4 +1,4 @@
-package com.zheng.upms.constant;
+package com.zheng.common.constant;
 
 import com.zheng.common.base.BaseConstants;
 

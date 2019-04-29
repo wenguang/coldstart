@@ -84,5 +84,9 @@
     <mvc:resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/"/>
     <mvc:resources mapping="/swagger-ui.html" location="classpath:/META-INF/resources/"/>
 
+    <!-- 跨域 -->
+    <!--<mvc:cors>-->
+        <!--<mvc:mapping path="/**" />-->
+    <!--</mvc:cors>-->
 
 </beans>

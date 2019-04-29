@@ -2,15 +2,13 @@ package com.zheng.upms.client.shiro.session;
 
 import com.zheng.common.util.RedisUtil;
 import com.zheng.upms.client.util.SerializableUtil;
-import com.zheng.upms.constant.UpmsConstant;
+import com.zheng.common.constant.UpmsConstant;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.ValidatingSession;
 import org.apache.shiro.session.mgt.eis.CachingSessionDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 
 import java.io.Serializable;

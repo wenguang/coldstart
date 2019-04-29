@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.zheng.common.constant.*;
+
 /**
  * 控制器基类
  * Created by ZhangShuzheng on 2017/2/4.
@@ -25,7 +27,7 @@ public abstract class BaseController {
 	 * @param exception
 	 */
 	@ExceptionHandler
-	public String exceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception exception) {
+	public UpmsResult exceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception exception) {
 		LOGGER.error("统一异常处理：", exception);
 		request.setAttribute("ex", exception);
 		if (null != request.getHeader("X-Requested-With") && "XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With"))) {
@@ -33,13 +35,13 @@ public abstract class BaseController {
 		}
 		// shiro没有权限异常
 		if (exception instanceof UnauthorizedException) {
-			return "/403.jsp";
+			return new UpmsResult(UpmsResultConstant.NO_ACCESS_PERMISSION, "没有访问权限");
 		}
 		// shiro会话已过期异常
 		if (exception instanceof InvalidSessionException) {
-			return "/error.jsp";
+			return new UpmsResult(UpmsResultConstant.INVALID_SESSION, "会话过期");
 		}
-		return "/error.jsp";
+		return new UpmsResult(UpmsResultConstant.FAILED, exception.getMessage());
 	}
 
 	/**

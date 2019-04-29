@@ -5,7 +5,7 @@ import com.zheng.common.util.PropertiesFileUtil;
 import com.zheng.common.util.RedisUtil;
 import com.zheng.upms.client.shiro.session.UpmsSessionDao;
 import com.zheng.upms.client.util.RequestParameterUtil;
-import com.zheng.upms.constant.UpmsConstant;
+import com.zheng.common.constant.UpmsConstant;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;

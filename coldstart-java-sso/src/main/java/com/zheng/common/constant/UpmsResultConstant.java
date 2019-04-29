@@ -1,4 +1,4 @@
-package com.zheng.upms.constant;
+package com.zheng.common.constant;
 
 /**
  * upms系统接口结果常量枚举类
@@ -44,7 +44,17 @@ public enum UpmsResultConstant {
     /**
      * 无效帐号
      */
-    INVALID_ACCOUNT(10105, "Invalid account");
+    INVALID_ACCOUNT(10105, "Invalid account"),
+
+    /**
+     * 会话过期
+     */
+    INVALID_SESSION(10106, "Invalid session"),
+
+    /**
+     * 没有访问权限
+     */
+    NO_ACCESS_PERMISSION(10107, "No access permission");
 
     public int code;
 
