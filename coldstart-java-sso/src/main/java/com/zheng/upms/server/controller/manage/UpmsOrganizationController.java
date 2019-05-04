@@ -70,7 +70,7 @@ public class UpmsOrganizationController extends BaseController {
         Map<String, Object> result = new HashMap<>();
         result.put("rows", rows);
         result.put("total", total);
-        return result;
+        return new UpmsResult(UpmsResultConstant.SUCCESS, result);
     }
 
     @ApiOperation(value = "新增组织")

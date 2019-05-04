@@ -29,14 +29,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
 import java.net.URLEncoder;
 import java.util.UUID;
 import java.util.Map;
@@ -117,16 +115,6 @@ public class SSOController extends BaseController {
         return "/sso/login.jsp";
     }
 
-    @RequestMapping(value = "/login2", method = RequestMethod.POST)
-    @ResponseBody
-    public Object login2(@RequestBody String a, HttpServletResponse response, ModelMap modelMap) {
-        if (a != null) {
-            System.out.println(a);
-            return new UpmsResult(UpmsResultConstant.SUCCESS, "解析到post数据");
-        }
-        return new UpmsResult(UpmsResultConstant.FAILED, "解析不到post数据");
-    }
-
     @ApiOperation(value = "登录")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
@@ -136,14 +124,12 @@ public class SSOController extends BaseController {
         String username = null;
         String password = null;
         String rememberMe = null;
+        String backurl = null;
         if (params != null) {
             username = params.containsKey("username") ? (String) params.get("username") : null;
             password = params.containsKey("password") ? (String) params.get("password") : null;
             rememberMe = params.containsKey("rememberMe") ? (String) params.get("rememberMe") : null;
-        }
-
-        if (username == null) {
-            return new UpmsResult(UpmsResultConstant.FAILED, "解析不到username字段");
+            backurl = params.containsKey("backurl") ? (String)params.get("backurl") : null;
         }
 
         if (StringUtils.isBlank(username)) {
@@ -187,7 +173,6 @@ public class SSOController extends BaseController {
             RedisUtil.set(ZHENG_UPMS_SERVER_CODE + "_" + code, code, (int) subject.getSession().getTimeout() / 1000);
         }
         // 回跳登录前地址
-        String backurl = request.getParameter("backurl");
         if (StringUtils.isBlank(backurl)) {
             UpmsSystem upmsSystem = upmsSystemService.selectUpmsSystemByName(PropertiesFileUtil.getInstance().get("app.name"));
             backurl = null == upmsSystem ? "/" : upmsSystem.getBasepath();
@@ -201,7 +186,12 @@ public class SSOController extends BaseController {
     @RequestMapping(value = "/code", method = RequestMethod.POST)
     @ResponseBody
     public Object code(HttpServletRequest request) {
-        String codeParam = request.getParameter("code");
+        Map<String, Object> params = HttpUtils.getPostParameterFromRequest(request);
+        String codeParam = null;
+        if (params != null)
+        {
+            codeParam = params.containsKey("code") ? (String) params.get("code") : null;
+        }
         String code = RedisUtil.get(ZHENG_UPMS_SERVER_CODE + "_" + codeParam);
         if (StringUtils.isBlank(codeParam) || !codeParam.equals(code)) {
             new UpmsResult(UpmsResultConstant.FAILED, "无效code");

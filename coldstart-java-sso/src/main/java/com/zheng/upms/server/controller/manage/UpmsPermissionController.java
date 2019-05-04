@@ -1,5 +1,6 @@
 package com.zheng.upms.server.controller.manage;
 
+import com.alibaba.fastjson.JSONArray;
 import com.baidu.unbiz.fluentvalidator.ComplexResult;
 import com.baidu.unbiz.fluentvalidator.FluentValidator;
 import com.baidu.unbiz.fluentvalidator.ResultCollectors;
@@ -89,19 +90,20 @@ public class UpmsPermissionController extends BaseController {
         Map<String, Object> result = new HashMap<>();
         result.put("rows", rows);
         result.put("total", total);
-        return result;
+        return new UpmsResult(UpmsResultConstant.SUCCESS, result);
     }
 
     @ApiOperation(value = "角色权限列表")
-    @RequiresPermissions("upms:permission:read")
+//    @RequiresPermissions("upms:permission:read")
     @RequestMapping(value = "/role/{id}", method = RequestMethod.POST)
     @ResponseBody
     public Object role(@PathVariable("id") int id) {
-        return upmsPermissionService.getTreeByRoleId(id);
+        JSONArray result =  upmsPermissionService.getTreeByRoleId(id);
+        return new UpmsResult(UpmsResultConstant.SUCCESS, result);
     }
 
     @ApiOperation(value = "用户权限列表")
-    @RequiresPermissions("upms:permission:read")
+//    @RequiresPermissions("upms:permission:read")
     @RequestMapping(value = "/user/{id}", method = RequestMethod.POST)
     @ResponseBody
     public Object user(@PathVariable("id") int id, HttpServletRequest request) {

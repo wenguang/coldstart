@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 /**
  * 会话管理controller
  * Created by shuzheng on 2017/2/28.
@@ -41,7 +43,8 @@ public class UpmsSessionController extends BaseController {
     public Object list(
             @RequestParam(required = false, defaultValue = "0", value = "offset") int offset,
             @RequestParam(required = false, defaultValue = "10", value = "limit") int limit) {
-        return sessionDAO.getActiveSessions(offset, limit);
+        Map result = sessionDAO.getActiveSessions(offset, limit);
+        return new UpmsResult(UpmsResultConstant.SUCCESS, result);
     }
 
     @ApiOperation(value = "强制退出")
