@@ -11,6 +11,8 @@ import com.zheng.common.constant.UpmsResult;
 import com.zheng.common.constant.UpmsResultConstant;
 import com.zheng.upms.dao.model.UpmsSystem;
 import com.zheng.upms.dao.model.UpmsSystemExample;
+import com.zheng.upms.dao.model.UpmsUser;
+import com.zheng.upms.service.UpmsApiService;
 import com.zheng.upms.service.UpmsSystemService;
 import com.zheng.upms.service.UpmsUserService;
 import io.swagger.annotations.Api;
@@ -36,6 +38,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.Map;
 
@@ -55,6 +58,9 @@ public class SSOController extends BaseController {
     private final static String ZHENG_UPMS_SERVER_SESSION_IDS = "zheng-upms-server-session-ids";
     // code key
     private final static String ZHENG_UPMS_SERVER_CODE = "zheng-upms-server-code";
+
+    @Autowired
+    UpmsApiService upmsApiService;
 
     @Autowired
     UpmsSystemService upmsSystemService;
@@ -171,6 +177,13 @@ public class SSOController extends BaseController {
             RedisUtil.set(ZHENG_UPMS_SERVER_SESSION_ID + "_" + sessionId, code, (int) subject.getSession().getTimeout() / 1000);
             // code校验值
             RedisUtil.set(ZHENG_UPMS_SERVER_CODE + "_" + code, code, (int) subject.getSession().getTimeout() / 1000);
+
+            // 返回一些用户信息给前端以作为调用其他API的参数用
+            UpmsUser upmsUser = upmsApiService.selectUpmsUserByUsername(username);
+            Map ret = new HashMap();
+            ret.put("id", upmsUser.getUserId());
+            ret.put("username", upmsUser.getUsername());
+            return new UpmsResult(UpmsResultConstant.SUCCESS, ret);
         }
         // 回跳登录前地址
         if (StringUtils.isBlank(backurl)) {
@@ -211,21 +224,5 @@ public class SSOController extends BaseController {
             redirectUrl = "/";
         }
         return new UpmsResult(UpmsResultConstant.SUCCESS, redirectUrl);
-    }
-
-
-    //  testing code
-
-    @ApiOperation(value = "重定向")
-    @RequestMapping(value = "/redirect", method = RequestMethod.GET)
-    public String redirect(HttpServletRequest request) {
-        return "redirect:/sso/hello";
-    }
-
-    @ApiOperation(value = "hello")
-    @RequestMapping(value = "/hello", method = RequestMethod.GET)
-    @ResponseBody
-    public Object hello(HttpServletRequest request) {
-        return new UpmsResult(UpmsResultConstant.SUCCESS, "hello");
     }
 }

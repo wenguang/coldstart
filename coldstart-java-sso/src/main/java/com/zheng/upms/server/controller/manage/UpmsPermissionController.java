@@ -5,6 +5,7 @@ import com.baidu.unbiz.fluentvalidator.ComplexResult;
 import com.baidu.unbiz.fluentvalidator.FluentValidator;
 import com.baidu.unbiz.fluentvalidator.ResultCollectors;
 import com.zheng.common.base.BaseController;
+import com.zheng.common.util.HttpUtils;
 import com.zheng.common.validator.LengthValidator;
 import com.zheng.common.constant.UpmsResult;
 import com.zheng.common.constant.UpmsResultConstant;
@@ -94,7 +95,7 @@ public class UpmsPermissionController extends BaseController {
     }
 
     @ApiOperation(value = "角色权限列表")
-//    @RequiresPermissions("upms:permission:read")
+    @RequiresPermissions("upms:permission:read")
     @RequestMapping(value = "/role/{id}", method = RequestMethod.POST)
     @ResponseBody
     public Object role(@PathVariable("id") int id) {
@@ -103,11 +104,18 @@ public class UpmsPermissionController extends BaseController {
     }
 
     @ApiOperation(value = "用户权限列表")
-//    @RequiresPermissions("upms:permission:read")
-    @RequestMapping(value = "/user/{id}", method = RequestMethod.POST)
+    @RequiresPermissions("upms:permission:read")
+    @RequestMapping(value = "/user", method = RequestMethod.POST)
     @ResponseBody
-    public Object user(@PathVariable("id") int id, HttpServletRequest request) {
-        return upmsPermissionService.getTreeByUserId(id, NumberUtils.toByte(request.getParameter("type")));
+    public Object user(HttpServletRequest request) {
+        Map params = HttpUtils.getPostParameterFromRequest(request);
+        int id = 0;
+        String type = null;
+        if (params != null) {
+            id = params.containsKey("id") ? (int)params.get("id") : 0;
+            type = params.containsKey("type") ? (String)params.get("type") : "0";
+        }
+        return upmsPermissionService.getTreeByUserId(id, NumberUtils.toByte(type));
     }
 
     @ApiOperation(value = "新增权限")
@@ -180,5 +188,4 @@ public class UpmsPermissionController extends BaseController {
         int count = upmsPermissionService.updateByPrimaryKeySelective(upmsPermission);
         return new UpmsResult(UpmsResultConstant.SUCCESS, count);
     }
-
 }
