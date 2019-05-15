@@ -45,12 +45,17 @@ public class UpmsPermissionController extends BaseController {
     @Autowired
     private UpmsPermissionService upmsPermissionService;
 
-
     @Autowired
     private UpmsSystemService upmsSystemService;
 
     @Autowired
     private UpmsApiService upmsApiService;
+
+    @RequestMapping(value = "/hello", method = RequestMethod.GET)
+    @ResponseBody
+    public Object hello() {
+        return new UpmsResult(UpmsResultConstant.SUCCESS, "hello");
+    }
 
     @ApiOperation(value = "权限首页")
     @RequiresPermissions("upms:permission:read")
@@ -115,7 +120,8 @@ public class UpmsPermissionController extends BaseController {
             id = params.containsKey("id") ? (int)params.get("id") : 0;
             type = params.containsKey("type") ? (String)params.get("type") : "0";
         }
-        return upmsPermissionService.getTreeByUserId(id, NumberUtils.toByte(type));
+        JSONArray ret = upmsPermissionService.getTreeByUserId(id, NumberUtils.toByte(type));
+        return new UpmsResult(UpmsResultConstant.SUCCESS, ret);
     }
 
     @ApiOperation(value = "新增权限")

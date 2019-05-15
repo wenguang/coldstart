@@ -160,6 +160,9 @@ public class SSOController extends BaseController {
                     usernamePasswordToken.setRememberMe(false);
                 }
                 subject.login(usernamePasswordToken);
+                if (SecurityUtils.getSubject().isAuthenticated()) {
+                    System.out.println("Authenticated");
+                }
             } catch (UnknownAccountException e) {
                 return new UpmsResult(UpmsResultConstant.INVALID_USERNAME, "帐号不存在！");
             } catch (IncorrectCredentialsException e) {
@@ -224,5 +227,11 @@ public class SSOController extends BaseController {
             redirectUrl = "/";
         }
         return new UpmsResult(UpmsResultConstant.SUCCESS, redirectUrl);
+    }
+
+    @RequestMapping(value = "/hello", method = RequestMethod.GET)
+    @ResponseBody
+    public Object hello() {
+        return new UpmsResult(UpmsResultConstant.SUCCESS, 0);
     }
 }

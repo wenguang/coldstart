@@ -35,7 +35,6 @@ public class UpmsLogController extends BaseController {
     @Autowired
     private UpmsLogService upmsLogService;
 
-
     @ApiOperation(value = "日志首页")
     @RequiresPermissions("upms:log:read")
     @RequestMapping(value = "/index", method = RequestMethod.GET)

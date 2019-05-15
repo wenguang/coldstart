@@ -63,7 +63,8 @@ public class UpmsAuthenticationFilter extends AuthenticationFilter {
             return validateClient(request, response);
         }
         if ("server".equals(upmsType)) {
-            return subject.isAuthenticated();
+            boolean b = subject.isAuthenticated();
+            return b;
         }
         return false;
     }

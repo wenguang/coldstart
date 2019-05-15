@@ -25,7 +25,6 @@ public class UpmsInterceptor extends HandlerInterceptorAdapter {
     private static final String ZHENG_OSS_ALIYUN_OSS_POLICY = PropertiesFileUtil.getInstance("zheng-oss-client").get("zheng.oss.aliyun.oss.policy");
 
     @Autowired
-//    UpmsApiServiceImpl upmsApiService;
     UpmsApiService upmsApiService;
 
 
@@ -33,13 +32,13 @@ public class UpmsInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         request.setAttribute("ZHENG_OSS_ALIYUN_OSS_POLICY", ZHENG_OSS_ALIYUN_OSS_POLICY);
         // 过滤ajax
-        if (null != request.getHeader("X-Requested-With") && "XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With"))) {
-            return true;
-        }
+//        if (null != request.getHeader("X-Requested-With") && "XMLHttpRequest".equalsIgnoreCase(request.getHeader("X-Requested-With"))) {
+//            return true;
+//        }
         // 登录信息
         Subject subject = SecurityUtils.getSubject();
         String username = (String) subject.getPrincipal();
-        UpmsUser upmsUser = upmsApiService.selectUpmsUserByUsername(username);
+        UpmsUser upmsUser = username != null ? upmsApiService.selectUpmsUserByUsername(username) : null;
         request.setAttribute("upmsUser", upmsUser);
         return true;
     }

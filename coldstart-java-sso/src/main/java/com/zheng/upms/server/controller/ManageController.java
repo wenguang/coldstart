@@ -1,6 +1,8 @@
 package com.zheng.upms.server.controller;
 
 import com.zheng.common.base.BaseController;
+import com.zheng.common.constant.UpmsResult;
+import com.zheng.common.constant.UpmsResultConstant;
 import com.zheng.upms.dao.model.*;
 import com.zheng.upms.service.UpmsApiService;
 import com.zheng.upms.service.UpmsApiServiceImpl;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
@@ -37,7 +40,6 @@ public class ManageController extends BaseController {
 
 	@Autowired
 	private UpmsApiService upmsApiService;
-
 
 	@ApiOperation(value = "后台首页")
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
