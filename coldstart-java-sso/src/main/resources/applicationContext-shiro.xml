@@ -54,13 +54,13 @@
     <bean id="upmsRealm" class="com.zheng.upms.client.shiro.realm.UpmsRealm"></bean>
 
     <!-- 会话管理器 -->
-    <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+    <bean id="sessionManager" class="org.apache.shiro.session.mgt.DefaultSessionManager">
         <!-- 全局session超时时间 -->
         <property name="globalSessionTimeout" value="${zheng.upms.session.timeout}"/>
         <!-- sessionDAO -->
         <property name="sessionDAO" ref="sessionDAO"/>
-        <property name="sessionIdCookieEnabled" value="true"/>
-        <property name="sessionIdCookie" ref="sessionIdCookie"/>
+        <!--<property name="sessionIdCookieEnabled" value="true"/>-->
+        <!--<property name="sessionIdCookie" ref="sessionIdCookie"/>-->
         <property name="sessionValidationSchedulerEnabled" value="false"/>
         <property name="sessionListeners">
             <list><ref bean="sessionListener"/></list>

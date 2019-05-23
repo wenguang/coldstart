@@ -56,6 +56,6 @@ public class CORSShiroFilter extends UserFilter {
 //        response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setHeader("Access-Control-Max-Age", "3600");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-        response.setStatus(HttpStatus.OK.value());
+//        response.setStatus(HttpStatus.OK.value());
     }
 }

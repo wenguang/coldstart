@@ -149,6 +149,10 @@ public class SSOController extends BaseController {
         String sessionId = session.getId().toString();
         // 判断是否已登录，如果已登录，则回跳，防止重复登录
         String hasCode = RedisUtil.get(ZHENG_UPMS_SERVER_SESSION_ID + "_" + sessionId);
+
+        System.out.println("session id is " + sessionId);
+        System.out.println("code for ZHENG_UPMS_SERVER_SESSION_ID_" + sessionId + " is " + hasCode);
+
         // code校验值
         if (StringUtils.isBlank(hasCode)) {
             // 使用shiro认证
@@ -160,9 +164,9 @@ public class SSOController extends BaseController {
                     usernamePasswordToken.setRememberMe(false);
                 }
                 subject.login(usernamePasswordToken);
-                if (SecurityUtils.getSubject().isAuthenticated()) {
-                    System.out.println("Authenticated");
-                }
+//                if (SecurityUtils.getSubject().isAuthenticated()) {
+//                    System.out.println("Authenticated");
+//                }
             } catch (UnknownAccountException e) {
                 return new UpmsResult(UpmsResultConstant.INVALID_USERNAME, "帐号不存在！");
             } catch (IncorrectCredentialsException e) {
@@ -178,6 +182,8 @@ public class SSOController extends BaseController {
             String code = UUID.randomUUID().toString();
             // 全局会话的code
             RedisUtil.set(ZHENG_UPMS_SERVER_SESSION_ID + "_" + sessionId, code, (int) subject.getSession().getTimeout() / 1000);
+            System.out.println("set ZHENG_UPMS_SERVER_SESSION_ID_" + sessionId + " for new code " + code);
+
             // code校验值
             RedisUtil.set(ZHENG_UPMS_SERVER_CODE + "_" + code, code, (int) subject.getSession().getTimeout() / 1000);
 
@@ -232,6 +238,14 @@ public class SSOController extends BaseController {
     @RequestMapping(value = "/hello", method = RequestMethod.GET)
     @ResponseBody
     public Object hello() {
+        Subject subject = SecurityUtils.getSubject();
+        Session session = subject.getSession();
+        String sessionId = session.getId().toString();
+        // 判断是否已登录，如果已登录，则回跳，防止重复登录
+        String hasCode = RedisUtil.get(ZHENG_UPMS_SERVER_SESSION_ID + "_" + sessionId);
+
+        System.out.println("session id is " + sessionId);
+        System.out.println("code for ZHENG_UPMS_SERVER_SESSION_ID_" + sessionId + " is " + hasCode);
         return new UpmsResult(UpmsResultConstant.SUCCESS, 0);
     }
 }
