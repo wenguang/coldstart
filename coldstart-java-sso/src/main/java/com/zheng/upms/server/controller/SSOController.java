@@ -1,10 +1,7 @@
 package com.zheng.upms.server.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.zheng.common.base.BaseController;
-import com.zheng.common.util.HttpUtils;
-import com.zheng.common.util.PropertiesFileUtil;
-import com.zheng.common.util.RedisUtil;
+import com.zheng.common.util.*;
 import com.zheng.upms.client.shiro.session.UpmsSession;
 import com.zheng.upms.client.shiro.session.UpmsSessionDao;
 import com.zheng.common.constant.UpmsResult;
@@ -58,6 +55,10 @@ public class SSOController extends BaseController {
     private final static String ZHENG_UPMS_SERVER_SESSION_IDS = "zheng-upms-server-session-ids";
     // code key
     private final static String ZHENG_UPMS_SERVER_CODE = "zheng-upms-server-code";
+
+    // 该前缀+注册用户名 构成注册token的key
+    private final static String COLD_START_REGISTER_TOKEN_PREFIX = "cold-start-register-token-for-";
+    //
 
     @Autowired
     UpmsApiService upmsApiService;
@@ -121,22 +122,91 @@ public class SSOController extends BaseController {
         return "/sso/login.jsp";
     }
 
+    @ApiOperation(value = "注册token")
+    @RequestMapping(value = "/registerToken", method = RequestMethod.GET)
+    @ResponseBody
+    public Object registerToken(HttpServletRequest request, HttpServletResponse response) {
+        String username = request.getParameter("username");
+        if (StringUtils.isBlank(username)) {
+            throw new RuntimeException("注册名不能为空");
+        }
+        //以用户名对应唯一的注册token
+        String regitserToken = UUID.randomUUID().toString();
+        RedisUtil.set(COLD_START_REGISTER_TOKEN_PREFIX + username, regitserToken);
+        return new UpmsResult(UpmsResultConstant.SUCCESS, regitserToken);
+    }
+
+    @ApiOperation(value = "注册")
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @ResponseBody
+    public Object register(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, String> params = RequestUtil.getParameterMapFromRequest(request);
+        String username = null;
+        String password = null;
+        return null;
+    }
+
     @ApiOperation(value = "登录")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
+    public Object login(HttpServletRequest request, HttpServletResponse response) {
+
+        String username = RequestUtil.getParameterFromRequest(request, "username");
+        String password = RequestUtil.getParameterFromRequest(request, "password");
+
+        if (StringUtils.isBlank(username)) {
+            return new UpmsResult(UpmsResultConstant.EMPTY_USERNAME, "帐号不能为空！");
+        }
+        if (StringUtils.isBlank(password)) {
+            return new UpmsResult(UpmsResultConstant.EMPTY_PASSWORD, "密码不能为空！");
+        }
+        Subject subject = SecurityUtils.getSubject();
+
+        // 使用shiro认证
+        UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(username, password);
+        try {
+            subject.login(usernamePasswordToken);
+        } catch (UnknownAccountException e) {
+            return new UpmsResult(UpmsResultConstant.INVALID_USERNAME, "帐号不存在！");
+        } catch (IncorrectCredentialsException e) {
+            return new UpmsResult(UpmsResultConstant.INVALID_PASSWORD, "密码错误！");
+        } catch (LockedAccountException e) {
+            return new UpmsResult(UpmsResultConstant.INVALID_ACCOUNT, "帐号已锁定！");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new UpmsResult(UpmsResultConstant.FAILED, e.getMessage());
+        }
+
+        // 更新session状态
+//        upmsSessionDao.updateStatus(sessionId, UpmsSession.OnlineStatus.on_line);
+
+        // 返回一些用户信息给前端以作为调用其他API的参数用
+        UpmsUser upmsUser = upmsApiService.selectUpmsUserByUsername(username);
+        Map ret = new HashMap();
+        ret.put("id", upmsUser.getUserId());
+        ret.put("username", upmsUser.getUsername());
+        return new UpmsResult(UpmsResultConstant.SUCCESS, ret);
+    }
+
+
+
+
+
+
+
+
+/** sso api **/
+
+
+    @ApiOperation(value = "sso登录")
+    @RequestMapping(value = "/ssologin", method = RequestMethod.POST)
+    @ResponseBody
     public Object login(HttpServletRequest request, HttpServletResponse response, ModelMap modelMap) {
 
-        Map<String, Object> params = HttpUtils.getPostParameterFromRequest(request);
-        String username = null;
-        String password = null;
-        String rememberMe = null;
-        String backurl = null;
-        if (params != null) {
-            username = params.containsKey("username") ? (String) params.get("username") : null;
-            password = params.containsKey("password") ? (String) params.get("password") : null;
-            rememberMe = params.containsKey("rememberMe") ? (String) params.get("rememberMe") : null;
-            backurl = params.containsKey("backurl") ? (String)params.get("backurl") : null;
-        }
+        String username = RequestUtil.getParameterFromRequest(request, "username");
+        String password = RequestUtil.getParameterFromRequest(request, "password");
+        String rememberMe = RequestUtil.getParameterFromRequest(request, "rememberMe");
+        String backurl = RequestUtil.getParameterFromRequest(request, "backurl");
 
         if (StringUtils.isBlank(username)) {
             return new UpmsResult(UpmsResultConstant.EMPTY_USERNAME, "帐号不能为空！");
@@ -208,12 +278,7 @@ public class SSOController extends BaseController {
     @RequestMapping(value = "/code", method = RequestMethod.POST)
     @ResponseBody
     public Object code(HttpServletRequest request) {
-        Map<String, Object> params = HttpUtils.getPostParameterFromRequest(request);
-        String codeParam = null;
-        if (params != null)
-        {
-            codeParam = params.containsKey("code") ? (String) params.get("code") : null;
-        }
+        String codeParam = RequestUtil.getParameterFromRequest(request, "code");
         String code = RedisUtil.get(ZHENG_UPMS_SERVER_CODE + "_" + codeParam);
         if (StringUtils.isBlank(codeParam) || !codeParam.equals(code)) {
             new UpmsResult(UpmsResultConstant.FAILED, "无效code");
@@ -239,13 +304,13 @@ public class SSOController extends BaseController {
     @ResponseBody
     public Object hello() {
         Subject subject = SecurityUtils.getSubject();
-        Session session = subject.getSession();
-        String sessionId = session.getId().toString();
-        // 判断是否已登录，如果已登录，则回跳，防止重复登录
-        String hasCode = RedisUtil.get(ZHENG_UPMS_SERVER_SESSION_ID + "_" + sessionId);
-
-        System.out.println("session id is " + sessionId);
-        System.out.println("code for ZHENG_UPMS_SERVER_SESSION_ID_" + sessionId + " is " + hasCode);
+//        Session session = subject.getSession();
+//        String sessionId = session.getId().toString();
+//        // 判断是否已登录，如果已登录，则回跳，防止重复登录
+//        String hasCode = RedisUtil.get(ZHENG_UPMS_SERVER_SESSION_ID + "_" + sessionId);
+//
+//        System.out.println("session id is " + sessionId);
+//        System.out.println("code for ZHENG_UPMS_SERVER_SESSION_ID_" + sessionId + " is " + hasCode);
         return new UpmsResult(UpmsResultConstant.SUCCESS, 0);
     }
 }

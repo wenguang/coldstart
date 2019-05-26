@@ -4,8 +4,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.baidu.unbiz.fluentvalidator.ComplexResult;
 import com.baidu.unbiz.fluentvalidator.FluentValidator;
 import com.baidu.unbiz.fluentvalidator.ResultCollectors;
+import com.sun.org.apache.regexp.internal.RE;
 import com.zheng.common.base.BaseController;
-import com.zheng.common.util.HttpUtils;
+import com.zheng.common.util.RequestUtil;
 import com.zheng.common.validator.LengthValidator;
 import com.zheng.common.constant.UpmsResult;
 import com.zheng.common.constant.UpmsResultConstant;
@@ -113,13 +114,9 @@ public class UpmsPermissionController extends BaseController {
     @RequestMapping(value = "/user", method = RequestMethod.POST)
     @ResponseBody
     public Object user(HttpServletRequest request) {
-        Map params = HttpUtils.getPostParameterFromRequest(request);
-        int id = 0;
-        String type = null;
-        if (params != null) {
-            id = params.containsKey("id") ? (int)params.get("id") : 0;
-            type = params.containsKey("type") ? (String)params.get("type") : "0";
-        }
+
+        int id = Integer.parseInt(RequestUtil.getParameterFromRequest(request, "id"));
+        String type = RequestUtil.getParameterFromRequest(request, "type");
         JSONArray ret = upmsPermissionService.getTreeByUserId(id, NumberUtils.toByte(type));
         return new UpmsResult(UpmsResultConstant.SUCCESS, ret);
     }

@@ -48,7 +48,11 @@
         </property>
         <property name="sessionManager" ref="sessionManager"/>
         <property name="rememberMeManager" ref="rememberMeManager"/>
+        <property name="subjectFactory" ref="testSubjectFactory"/>
     </bean>
+
+    <!-- 改造SubjectFactory，让shiro不创建session -->
+    <bean id="testSubjectFactory" class="com.zheng.upms.client.shiro.subject.TestSubjectFactory"/>
 
     <!-- realm实现，继承自AuthorizingRealm -->
     <bean id="upmsRealm" class="com.zheng.upms.client.shiro.realm.UpmsRealm"></bean>

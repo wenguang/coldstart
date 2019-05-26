@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.zheng.common.constant.UpmsResult;
 import com.zheng.common.constant.UpmsResultConstant;
 import org.apache.shiro.web.filter.authc.UserFilter;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.ServletRequest;

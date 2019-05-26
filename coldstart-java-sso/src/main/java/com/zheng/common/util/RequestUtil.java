@@ -1,6 +1,12 @@
 package com.zheng.common.util;
 
+import com.alibaba.fastjson.JSON;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +17,7 @@ import java.util.Map;
  */
 public class RequestUtil {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(RequestUtil.class);
 	/**
 	 * 移除request指定参数
 	 * @param request
@@ -95,4 +102,41 @@ public class RequestUtil {
 		return result;
 	}
 
+
+
+	public static Map<String, String> getParameterMapFromRequest(HttpServletRequest request) {
+		if (request.getMethod().equalsIgnoreCase("GET")) {
+			Map<String, String> result = new HashMap<>();
+			Enumeration parameterNames = request.getParameterNames();
+			while (parameterNames.hasMoreElements()) {
+				String parameterName = (String) parameterNames.nextElement();
+				result.put(parameterName, request.getParameter(parameterName));
+			}
+			return result;
+		} else if (request.getMethod().equalsIgnoreCase("POST")) {
+			String str, wholeStr = "";
+			try {
+				BufferedReader br = request.getReader();
+				while ((str = br.readLine()) != null) {
+					wholeStr += str;
+				}
+				if (StringUtils.isNotBlank(wholeStr)) {
+					return JSON.parseObject(wholeStr, Map.class);
+				}
+			} catch (Exception e) {
+				LOGGER.error("", e);
+			}
+		}
+		return null;
+	}
+
+	public static String getParameterFromRequest(HttpServletRequest request, String paramName) {
+		if (request.getMethod().equalsIgnoreCase("GET")) {
+			return request.getParameter(paramName);
+		} else if (request.getMethod().equalsIgnoreCase("POST")) {
+			Map<String, String> params = getParameterMapFromRequest(request);
+			return params.containsKey(paramName) ? (String)params.get(paramName) : null;
+		}
+		return null;
+	}
 }

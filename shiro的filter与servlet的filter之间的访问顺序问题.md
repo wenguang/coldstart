@@ -1,0 +1,1 @@
+###### 在用前端访问/manage/permission/hello时，根据断点的顺序判断，先执行扩展自servlet的跨域过滤器CORSFilter，再执行扩展自shiro的跨域过滤器CORSShiroFilter，这和shiro的过滤链前于servlet容器自身的过滤链有矛盾。
