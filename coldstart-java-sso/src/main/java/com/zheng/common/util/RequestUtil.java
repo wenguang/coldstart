@@ -182,11 +182,6 @@ public class RequestUtil {
 			return request.getParameter(paramName);
 		} else if (request.getMethod().equalsIgnoreCase("POST")) {
 			Map<String, String> params = getExtractedParamMapFromRequest(request);
-//			if (paramName.equalsIgnoreCase("timestamp")) {
-//				Object obj = params.get(paramName);
-//				String timestamp = String.valueOf(obj);
-//				return timestamp;
-//			}
 			return (params != null && params.containsKey(paramName)) ? String.valueOf(params.get(paramName)) : null;
 		}
 		return null;
