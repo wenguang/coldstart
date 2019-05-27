@@ -115,8 +115,8 @@ public class UpmsPermissionController extends BaseController {
     @ResponseBody
     public Object user(HttpServletRequest request) {
 
-        int id = Integer.parseInt(RequestUtil.getParameterFromRequest(request, "id"));
-        String type = RequestUtil.getParameterFromRequest(request, "type");
+        int id = Integer.parseInt(RequestUtil.getExtractedParamFromRequest(request, "id"));
+        String type = RequestUtil.getExtractedParamFromRequest(request, "type");
         JSONArray ret = upmsPermissionService.getTreeByUserId(id, NumberUtils.toByte(type));
         return new UpmsResult(UpmsResultConstant.SUCCESS, ret);
     }

@@ -151,8 +151,8 @@ public class SSOController extends BaseController {
     @ResponseBody
     public Object login(HttpServletRequest request, HttpServletResponse response) {
 
-        String username = RequestUtil.getParameterFromRequest(request, "username");
-        String password = RequestUtil.getParameterFromRequest(request, "password");
+        String username = RequestUtil.getExtractedParamFromRequest(request, "username");
+        String password = RequestUtil.getExtractedParamFromRequest(request, "password");
 
         if (StringUtils.isBlank(username)) {
             return new UpmsResult(UpmsResultConstant.EMPTY_USERNAME, "帐号不能为空！");
@@ -203,10 +203,10 @@ public class SSOController extends BaseController {
     @ResponseBody
     public Object login(HttpServletRequest request, HttpServletResponse response, ModelMap modelMap) {
 
-        String username = RequestUtil.getParameterFromRequest(request, "username");
-        String password = RequestUtil.getParameterFromRequest(request, "password");
-        String rememberMe = RequestUtil.getParameterFromRequest(request, "rememberMe");
-        String backurl = RequestUtil.getParameterFromRequest(request, "backurl");
+        String username = RequestUtil.getExtractedParamFromRequest(request, "username");
+        String password = RequestUtil.getExtractedParamFromRequest(request, "password");
+        String rememberMe = RequestUtil.getExtractedParamFromRequest(request, "rememberMe");
+        String backurl = RequestUtil.getExtractedParamFromRequest(request, "backurl");
 
         if (StringUtils.isBlank(username)) {
             return new UpmsResult(UpmsResultConstant.EMPTY_USERNAME, "帐号不能为空！");
@@ -278,7 +278,7 @@ public class SSOController extends BaseController {
     @RequestMapping(value = "/code", method = RequestMethod.POST)
     @ResponseBody
     public Object code(HttpServletRequest request) {
-        String codeParam = RequestUtil.getParameterFromRequest(request, "code");
+        String codeParam = RequestUtil.getExtractedParamFromRequest(request, "code");
         String code = RedisUtil.get(ZHENG_UPMS_SERVER_CODE + "_" + codeParam);
         if (StringUtils.isBlank(codeParam) || !codeParam.equals(code)) {
             new UpmsResult(UpmsResultConstant.FAILED, "无效code");
@@ -311,6 +311,6 @@ public class SSOController extends BaseController {
 //
 //        System.out.println("session id is " + sessionId);
 //        System.out.println("code for ZHENG_UPMS_SERVER_SESSION_ID_" + sessionId + " is " + hasCode);
-        return new UpmsResult(UpmsResultConstant.SUCCESS, 0);
+        return new UpmsResult(UpmsResultConstant.SUCCESS, "hello");
     }
 }

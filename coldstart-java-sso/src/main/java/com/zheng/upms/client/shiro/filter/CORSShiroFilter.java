@@ -38,6 +38,7 @@ public class CORSShiroFilter extends UserFilter {
     protected void saveRequestAndRedirectToLogin(ServletRequest request, ServletResponse response) throws IOException {
         saveRequest(request);
         setHeader((HttpServletRequest) request,(HttpServletResponse) response);
+        response.setContentType("text/html; charset=utf-8");
         PrintWriter out = response.getWriter();
         out.println(JSONObject.toJSONString(new UpmsResult(UpmsResultConstant.FAILED, "shiro authentication failed")));
         out.flush();

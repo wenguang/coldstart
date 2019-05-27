@@ -3,8 +3,8 @@ package com.zheng.common.filter;
 import com.alibaba.fastjson.JSONObject;
 import com.zheng.common.constant.UpmsResult;
 import com.zheng.common.constant.UpmsResultConstant;
+import com.zheng.common.util.AESUtil;
 import com.zheng.common.util.RequestUtil;
-import com.zheng.common.util.StringUtil;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -41,36 +41,34 @@ public class HmacFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest)servletRequest;
         HttpServletResponse response = (HttpServletResponse)servletResponse;
 
-        String apiId = RequestUtil.getParameterFromRequest(request, APIID);
-        String timestamp = RequestUtil.getParameterFromRequest(request, TIMESTAMP);
-        String digest = RequestUtil.getParameterFromRequest(request, DIGEST);
+        if (request.getMethod().equalsIgnoreCase("GET") || request.getMethod().equalsIgnoreCase("POST")) {
 
-        if (StringUtils.isBlank(apiId) || StringUtils.isBlank(timestamp) || StringUtils.isBlank(digest)) {
-            PrintWriter out = response.getWriter();
-            out.println(JSONObject.toJSONString(new UpmsResult(UpmsResultConstant.FAILED, "缺少必要的参数")));
-            out.flush();
-            out.close();
-        } else {
-            Map<String, String> paramMap = RequestUtil.getParameterMapFromRequest(request);
-            Set<String> keySet = paramMap.keySet();
-            List<String> keyList = new ArrayList<>(keySet);
-            Collections.sort(keyList);
-            String baseString = "";
-            for (int i=0; i<keyList.size(); i++) {
-                String key = keyList.get(i);
-                if (!key.equals(APIID) && !key.equals(TIMESTAMP) && !key.equals(DIGEST)) {
-                    baseString += paramMap.get(key);
+            String apiId = RequestUtil.getExtractedParamFromRequest(request, APIID);
+            String timestamp = RequestUtil.getExtractedParamFromRequest(request, TIMESTAMP);
+            String digest = RequestUtil.getExtractedParamFromRequest(request, DIGEST);
+
+            // apiId、timestamp、digest这3个参数是必要的
+            if (StringUtils.isBlank(apiId) || StringUtils.isBlank(timestamp) || StringUtils.isBlank(digest)) {
+                responseTo(response, "缺少必要的参数");
+            } else {
+                Map<String, String> paramMap = RequestUtil.getExtractedParamMapFromRequest(request);
+                Set<String> keySet = paramMap.keySet();
+                List<String> keyList = new ArrayList<>(keySet);
+                Collections.sort(keyList);
+                String baseString = "";
+                for (int i = 0; i < keyList.size(); i++) {
+                    String key = keyList.get(i);
+                    if (!key.equals(APIID) && !key.equals(TIMESTAMP) && !key.equals(DIGEST)) {
+                        baseString += paramMap.get(key);
+                    }
                 }
-            }
-            baseString += apiId;
-            baseString += timestamp;
+                baseString += apiId;
+                baseString += timestamp;
 
-            String digest2 = hmacDigest(baseString);
-            if (!digest.equals(digest2)) {
-                PrintWriter out = response.getWriter();
-                out.println(JSONObject.toJSONString(new UpmsResult(UpmsResultConstant.FAILED, "参数被篡改过")));
-                out.flush();
-                out.close();
+                String digest2 = AESUtil.hmacDigest(baseString);
+                if (!digest.equals(digest2)) {
+                    responseTo(response, "参数被篡改过");
+                }
             }
         }
 
@@ -83,26 +81,54 @@ public class HmacFilter implements Filter {
     }
 
     /**
+     * 过滤失败，返回错误信息给前端
+     */
+    private static void responseTo(HttpServletResponse response, String data) throws IOException {
+        response.setContentType("text/html; charset=utf-8");
+        PrintWriter out = response.getWriter();
+        out.println(JSONObject.toJSONString(new UpmsResult(UpmsResultConstant.FAILED, data)));
+        out.flush();
+        out.close();
+    }
+
+    /**
      *  使用HMAC摘要算法和秘钥API KEY生成数组摘要
      */
-    private static String hmacDigest(String data) {
+//    private static String hmacDigest(String data) {
+//
+//        String checksum = null;
+//        try {
+//            byte[] appKeyByte = API_KEY.getBytes("UTF-8");
+//            byte[] dataByte = data.getBytes("UTF-8");
+//            SecretKey secretKey = new SecretKeySpec(appKeyByte, "HmacMD5");
+//
+//            Mac mac = Mac.getInstance("HmacMD5");
+//            mac.init(secretKey);
+//            byte[] doFinal = mac.doFinal(dataByte);
+//            byte[] hexB = new Hex().encode(doFinal);
+//
+//            checksum = new String(hexB);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return checksum;
+//    }
 
-        String checksum = null;
-        try {
-            byte[] appKeyByte = API_KEY.getBytes("UTF-8");
-            byte[] dataByte = data.getBytes("UTF-8");
-            SecretKey secretKey = new SecretKeySpec(appKeyByte, "HmacMD5");
-
-            Mac mac = Mac.getInstance("HmacMD5");
-            mac.init(secretKey);
-            byte[] doFinal = mac.doFinal(dataByte);
-            byte[] hexB = new Hex().encode(doFinal);
-
-            checksum = new String(hexB);
-
-        } catch (Exception e) {
-            e.printStackTrace();
+    public static void main(String[] args) {
+        List<String> list = new ArrayList<>();
+        list.add("ccaa");
+        list.add("zzya");
+        list.add("oobp");
+        list.add("aayy");
+        list.add("aabb");
+        for (int i=0; i<list.size(); i++) {
+            System.out.println(list.get(i));
         }
-        return checksum;
+        System.out.println("----------------");
+        Collections.sort(list);
+        for (int i=0; i<list.size(); i++) {
+            System.out.println(list.get(i));
+        }
     }
 }

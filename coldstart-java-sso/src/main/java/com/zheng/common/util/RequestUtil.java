@@ -103,16 +103,20 @@ public class RequestUtil {
 	}
 
 
-
+	/**
+	 * 从request中读取请求参数Map（GET的或POST的）
+	 * @param request
+	 * @return
+	 */
 	public static Map<String, String> getParameterMapFromRequest(HttpServletRequest request) {
 		if (request.getMethod().equalsIgnoreCase("GET")) {
-			Map<String, String> result = new HashMap<>();
+			Map<String, String> paramMap = new HashMap<>();
 			Enumeration parameterNames = request.getParameterNames();
 			while (parameterNames.hasMoreElements()) {
 				String parameterName = (String) parameterNames.nextElement();
-				result.put(parameterName, request.getParameter(parameterName));
+				paramMap.put(parameterName, request.getParameter(parameterName));
 			}
-			return result;
+			return paramMap;
 		} else if (request.getMethod().equalsIgnoreCase("POST")) {
 			String str, wholeStr = "";
 			try {
@@ -130,12 +134,60 @@ public class RequestUtil {
 		return null;
 	}
 
+	/**
+	 * 从request读取指定参数名的参数值（GET的或POST的）
+	 * @param request
+	 * @param paramName
+	 * @return
+	 */
 	public static String getParameterFromRequest(HttpServletRequest request, String paramName) {
 		if (request.getMethod().equalsIgnoreCase("GET")) {
 			return request.getParameter(paramName);
 		} else if (request.getMethod().equalsIgnoreCase("POST")) {
 			Map<String, String> params = getParameterMapFromRequest(request);
-			return params.containsKey(paramName) ? (String)params.get(paramName) : null;
+			return (params != null && params.containsKey(paramName)) ? String.valueOf(params.get(paramName)) : null;
+		}
+		return null;
+	}
+
+	/**
+	 * 因为用流的方式读取POST参数只能读取一次，所以这里把参数提取出来放在request的一个attribute属性中，这样就可以重复读取了
+	 * @param request
+	 * @return
+	 */
+	public static HttpServletRequest extractParam(HttpServletRequest request) {
+		Map<String, String> paramMap = getParameterMapFromRequest(request);
+		HttpServletRequest request1 = request;
+		request1.setAttribute("paramMap", paramMap);
+		return request1;
+	}
+
+	/**
+	 * 从request读取参数Map
+	 * @param request 该request是经过提取参数的了
+	 * @return
+	 */
+	public static Map<String, String> getExtractedParamMapFromRequest(HttpServletRequest request) {
+		return (Map<String, String>)request.getAttribute("paramMap");
+	}
+
+	/**
+	 * 从request读取指定参数名的参数值（GET的或POST的），该request已经经过提取参数map了，从attribute中读取POST参数值
+	 * @param request
+	 * @param paramName
+	 * @return
+	 */
+	public static String getExtractedParamFromRequest(HttpServletRequest request, String paramName) {
+		if (request.getMethod().equalsIgnoreCase("GET")) {
+			return request.getParameter(paramName);
+		} else if (request.getMethod().equalsIgnoreCase("POST")) {
+			Map<String, String> params = getExtractedParamMapFromRequest(request);
+//			if (paramName.equalsIgnoreCase("timestamp")) {
+//				Object obj = params.get(paramName);
+//				String timestamp = String.valueOf(obj);
+//				return timestamp;
+//			}
+			return (params != null && params.containsKey(paramName)) ? String.valueOf(params.get(paramName)) : null;
 		}
 		return null;
 	}

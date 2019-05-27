@@ -1,5 +1,6 @@
 package com.zheng.common.util;
 
+import org.apache.commons.codec.binary.Hex;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
@@ -10,6 +11,9 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * AES加解密工具类
@@ -18,6 +22,8 @@ import java.security.SecureRandom;
 public class AESUtil {
 
     private static final String ENCODE_RULES = "zheng";
+
+    private final static String API_KEY = "haha43420024";
 
     /**
      * 加密
@@ -127,6 +133,30 @@ public class AESUtil {
         return null;
     }
 
+    /**
+     *  使用HMAC摘要算法和秘钥API KEY生成数组摘要
+     */
+    public static String hmacDigest(String data) {
+
+        String checksum = null;
+        try {
+            byte[] appKeyByte = API_KEY.getBytes("UTF-8");
+            byte[] dataByte = data.getBytes("UTF-8");
+            SecretKey secretKey = new SecretKeySpec(appKeyByte, "HmacMD5");
+
+            Mac mac = Mac.getInstance("HmacMD5");
+            mac.init(secretKey);
+            byte[] doFinal = mac.doFinal(dataByte);
+            byte[] hexB = new Hex().encode(doFinal);
+
+            checksum = new String(hexB);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return checksum;
+    }
+
     public static void main(String[] args) {
         String[] keys = {
                 "mj43420024", "123456"
@@ -139,6 +169,28 @@ public class AESUtil {
             String decryptString = aesDecode(encryptString);
             System.out.println(decryptString);
         }
+
+        System.out.println("----------------");
+        // 测试list排序
+        List<String> list = new ArrayList<>();
+        list.add("ccaa");
+        list.add("zzya");
+        list.add("oobp");
+        list.add("aayy");
+        list.add("aabb");
+        for (int i=0; i<list.size(); i++) {
+            System.out.println(list.get(i));
+        }
+        System.out.println("----------------");
+        Collections.sort(list);
+        for (int i=0; i<list.size(); i++) {
+            System.out.println(list.get(i));
+        }
+
+        System.out.println("----------------");
+
+        // 测试Hmac-md5算法
+        System.out.println(hmacDigest("123456"));
     }
 
 }

@@ -30,6 +30,16 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
+  <!-- 提取参数filter，POST参数可以重复读取，注意该filter要放在API鉴权filter前面执行 -->
+  <filter>
+    <filter-name>ExtractFilter</filter-name>
+    <filter-class>com.zheng.common.filter.ExtractFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>ExtractFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
   <!-- HMAC API鉴权 filter -->
   <filter>
     <filter-name>HMACFilter</filter-name>

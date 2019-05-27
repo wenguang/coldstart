@@ -6,7 +6,7 @@ import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 
 public class TestSubjectFactory extends DefaultWebSubjectFactory {
     public Subject createSubject(SubjectContext context) {
-        context.setSessionCreationEnabled(false);
+//        context.setSessionCreationEnabled(false);
         return super.createSubject(context);
     }
 }
