@@ -115,20 +115,4 @@ public class HmacFilter implements Filter {
 //        return checksum;
 //    }
 
-    public static void main(String[] args) {
-        List<String> list = new ArrayList<>();
-        list.add("ccaa");
-        list.add("zzya");
-        list.add("oobp");
-        list.add("aayy");
-        list.add("aabb");
-        for (int i=0; i<list.size(); i++) {
-            System.out.println(list.get(i));
-        }
-        System.out.println("----------------");
-        Collections.sort(list);
-        for (int i=0; i<list.size(); i++) {
-            System.out.println(list.get(i));
-        }
-    }
 }

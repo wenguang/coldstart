@@ -191,6 +191,7 @@ public class AESUtil {
 
         // 测试Hmac-md5算法
         System.out.println(hmacDigest("123456"));
+
     }
 
 }

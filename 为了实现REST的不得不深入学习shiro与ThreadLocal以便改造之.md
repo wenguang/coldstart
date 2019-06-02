@@ -45,3 +45,28 @@ ThreadLocal只定义了几个重要操作：
 - TheadLocal定义了数据操作的方法，但它并非最终操作数据的地方，它主要是作用以本身为key串接当前线程的ThreadLocalMap，最终操作还得落在TheadLocalMap上。
 - ThreadLocal是一个泛型，可以声明本身这个TheadLocal在ThreadLocalMap中对应的数据类型，若这个泛型声明Map，那就是线程有一个类型Map的结构储存数据，而Map中的一个value又是一个Map，双重Map结构。
 
+ThreadLocal作为使用这套功能的主切入点，我不知道应该如何描述ThreadLocal在Thread、TheadLocalMap，TheadLocalMap.Entry的位置，就用主切入点这个词，从代码实现上看，TheadLocalMap是完成了最多工作的，而我们从各种文档（包括官方文档）中都看到，都是以ThreadLocal为主角在叙述的，因为使用方只需要对ThreadLocal操作即可，它作为一个key不但声明其value的类型了，还提供了操作其value的方法（set、get、remove），且这些方法的参数最多只涉及到其声明的value类型，这样这套API显得很简洁了。
+
+那来看看要怎么使用它？
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
