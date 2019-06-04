@@ -44,7 +44,7 @@ import java.util.Map;
  * Created by shuzheng on 2016/12/10.
  */
 @Controller
-@RequestMapping("/sso")
+@RequestMapping("/oldsso")
 @Api(value = "单点登录管理", description = "单点登录管理")
 public class SSOController extends BaseController {
 
@@ -146,47 +146,47 @@ public class SSOController extends BaseController {
         return null;
     }
 
-    @ApiOperation(value = "登录")
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    @ResponseBody
-    public Object login(HttpServletRequest request, HttpServletResponse response) {
-
-        String username = RequestUtil.getExtractedParamFromRequest(request, "username");
-        String password = RequestUtil.getExtractedParamFromRequest(request, "password");
-
-        if (StringUtils.isBlank(username)) {
-            return new UpmsResult(UpmsResultConstant.EMPTY_USERNAME, "帐号不能为空！");
-        }
-        if (StringUtils.isBlank(password)) {
-            return new UpmsResult(UpmsResultConstant.EMPTY_PASSWORD, "密码不能为空！");
-        }
-        Subject subject = SecurityUtils.getSubject();
-
-        // 使用shiro认证
-        UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(username, password);
-        try {
-            subject.login(usernamePasswordToken);
-        } catch (UnknownAccountException e) {
-            return new UpmsResult(UpmsResultConstant.INVALID_USERNAME, "帐号不存在！");
-        } catch (IncorrectCredentialsException e) {
-            return new UpmsResult(UpmsResultConstant.INVALID_PASSWORD, "密码错误！");
-        } catch (LockedAccountException e) {
-            return new UpmsResult(UpmsResultConstant.INVALID_ACCOUNT, "帐号已锁定！");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new UpmsResult(UpmsResultConstant.FAILED, e.getMessage());
-        }
-
-        // 更新session状态
-//        upmsSessionDao.updateStatus(sessionId, UpmsSession.OnlineStatus.on_line);
-
-        // 返回一些用户信息给前端以作为调用其他API的参数用
-        UpmsUser upmsUser = upmsApiService.selectUpmsUserByUsername(username);
-        Map ret = new HashMap();
-        ret.put("id", upmsUser.getUserId());
-        ret.put("username", upmsUser.getUsername());
-        return new UpmsResult(UpmsResultConstant.SUCCESS, ret);
-    }
+//    @ApiOperation(value = "登录")
+//    @RequestMapping(value = "/login", method = RequestMethod.POST)
+//    @ResponseBody
+//    public Object login(HttpServletRequest request, HttpServletResponse response) {
+//
+//        String username = RequestUtil.getExtractedParamFromRequest(request, "username");
+//        String password = RequestUtil.getExtractedParamFromRequest(request, "password");
+//
+//        if (StringUtils.isBlank(username)) {
+//            return new UpmsResult(UpmsResultConstant.EMPTY_USERNAME, "帐号不能为空！");
+//        }
+//        if (StringUtils.isBlank(password)) {
+//            return new UpmsResult(UpmsResultConstant.EMPTY_PASSWORD, "密码不能为空！");
+//        }
+//        Subject subject = SecurityUtils.getSubject();
+//
+//        // 使用shiro认证
+//        UsernamePasswordToken usernamePasswordToken = new UsernamePasswordToken(username, password);
+//        try {
+//            subject.login(usernamePasswordToken);
+//        } catch (UnknownAccountException e) {
+//            return new UpmsResult(UpmsResultConstant.INVALID_USERNAME, "帐号不存在！");
+//        } catch (IncorrectCredentialsException e) {
+//            return new UpmsResult(UpmsResultConstant.INVALID_PASSWORD, "密码错误！");
+//        } catch (LockedAccountException e) {
+//            return new UpmsResult(UpmsResultConstant.INVALID_ACCOUNT, "帐号已锁定！");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new UpmsResult(UpmsResultConstant.FAILED, e.getMessage());
+//        }
+//
+//        // 更新session状态
+////        upmsSessionDao.updateStatus(sessionId, UpmsSession.OnlineStatus.on_line);
+//
+//        // 返回一些用户信息给前端以作为调用其他API的参数用
+//        UpmsUser upmsUser = upmsApiService.selectUpmsUserByUsername(username);
+//        Map ret = new HashMap();
+//        ret.put("id", upmsUser.getUserId());
+//        ret.put("username", upmsUser.getUsername());
+//        return new UpmsResult(UpmsResultConstant.SUCCESS, ret);
+//    }
 
 
 

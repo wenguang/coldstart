@@ -34,7 +34,7 @@
         <!-- 获取登录信息 -->
         <mvc:interceptor>
             <mvc:mapping path="/manage/**"/>
-            <bean class="com.zheng.upms.server.interceptor.UpmsInterceptor"></bean>
+            <bean class="com.zheng.upms.server.interceptor.RestInterceptor"></bean>
         </mvc:interceptor>
     </mvc:interceptors>
 

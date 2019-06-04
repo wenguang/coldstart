@@ -5,6 +5,7 @@ import com.zheng.common.constant.UpmsResult;
 import com.zheng.common.constant.UpmsResultConstant;
 import com.zheng.common.util.AESUtil;
 import com.zheng.common.util.RequestUtil;
+import com.zheng.common.util.ResponseUtil;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -49,7 +50,7 @@ public class HmacFilter implements Filter {
 
             // apiId、timestamp、digest这3个参数是必要的
             if (StringUtils.isBlank(apiId) || StringUtils.isBlank(timestamp) || StringUtils.isBlank(digest)) {
-                responseTo(response, "缺少必要的参数");
+                ResponseUtil.returnTo(response, new UpmsResult(UpmsResultConstant.FAILED, "缺少必要的参数"));
             } else {
                 Map<String, String> paramMap = RequestUtil.getExtractedParamMapFromRequest(request);
                 Set<String> keySet = paramMap.keySet();
@@ -67,7 +68,7 @@ public class HmacFilter implements Filter {
 
                 String digest2 = AESUtil.hmacDigest(baseString);
                 if (!digest.equals(digest2)) {
-                    responseTo(response, "参数被篡改过");
+                    ResponseUtil.returnTo(response, new UpmsResult(UpmsResultConstant.FAILED, "参数被篡改过"));
                 }
             }
         }
@@ -78,17 +79,6 @@ public class HmacFilter implements Filter {
     @Override
     public void destroy() {
 
-    }
-
-    /**
-     * 过滤失败，返回错误信息给前端
-     */
-    private static void responseTo(HttpServletResponse response, String data) throws IOException {
-        response.setContentType("text/html; charset=utf-8");
-        PrintWriter out = response.getWriter();
-        out.println(JSONObject.toJSONString(new UpmsResult(UpmsResultConstant.FAILED, data)));
-        out.flush();
-        out.close();
     }
 
     /**

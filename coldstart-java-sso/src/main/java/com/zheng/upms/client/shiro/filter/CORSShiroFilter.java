@@ -3,6 +3,7 @@ package com.zheng.upms.client.shiro.filter;
 import com.alibaba.fastjson.JSONObject;
 import com.zheng.common.constant.UpmsResult;
 import com.zheng.common.constant.UpmsResultConstant;
+import com.zheng.common.util.ResponseUtil;
 import org.apache.shiro.web.filter.authc.UserFilter;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -11,7 +12,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 public class CORSShiroFilter extends UserFilter {
 
@@ -36,13 +36,11 @@ public class CORSShiroFilter extends UserFilter {
      */
     @Override
     protected void saveRequestAndRedirectToLogin(ServletRequest request, ServletResponse response) throws IOException {
-        saveRequest(request);
+        // saveRequest是把request暂存在session中，待登录后再跳转
+        // REST的方式这个方法就用不成了
+        //saveRequest(request);
         setHeader((HttpServletRequest) request,(HttpServletResponse) response);
-        response.setContentType("text/html; charset=utf-8");
-        PrintWriter out = response.getWriter();
-        out.println(JSONObject.toJSONString(new UpmsResult(UpmsResultConstant.FAILED, "shiro authentication failed")));
-        out.flush();
-        out.close();
+        ResponseUtil.returnTo(response, new UpmsResult(UpmsResultConstant.FAILED, "shiro authentication failed"));
     }
 
     /**
