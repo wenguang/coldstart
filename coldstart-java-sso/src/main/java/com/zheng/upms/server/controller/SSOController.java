@@ -140,7 +140,7 @@ public class SSOController extends BaseController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     @ResponseBody
     public Object register(HttpServletRequest request, HttpServletResponse response) {
-        Map<String, String> params = RequestUtil.getParameterMapFromRequest(request);
+        Map<String, Object> params = RequestUtil.getParameterMapFromRequest(request);
         String username = null;
         String password = null;
         return null;

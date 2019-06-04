@@ -52,7 +52,7 @@ public class HmacFilter implements Filter {
             if (StringUtils.isBlank(apiId) || StringUtils.isBlank(timestamp) || StringUtils.isBlank(digest)) {
                 ResponseUtil.returnTo(response, new UpmsResult(UpmsResultConstant.FAILED, "缺少必要的参数"));
             } else {
-                Map<String, String> paramMap = RequestUtil.getExtractedParamMapFromRequest(request);
+                Map<String, Object> paramMap = RequestUtil.getExtractedParamMapFromRequest(request);
                 Set<String> keySet = paramMap.keySet();
                 List<String> keyList = new ArrayList<>(keySet);
                 Collections.sort(keyList);
@@ -60,7 +60,7 @@ public class HmacFilter implements Filter {
                 for (int i = 0; i < keyList.size(); i++) {
                     String key = keyList.get(i);
                     if (!key.equals(APIID) && !key.equals(TIMESTAMP) && !key.equals(DIGEST)) {
-                        baseString += paramMap.get(key);
+                        baseString += String.valueOf(paramMap.get(key));
                     }
                 }
                 baseString += apiId;

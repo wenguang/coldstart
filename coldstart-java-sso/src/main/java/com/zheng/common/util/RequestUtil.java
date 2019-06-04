@@ -103,14 +103,16 @@ public class RequestUtil {
 	}
 
 
+	/**--------------------------   分隔线   ----------------------------*/
+
 	/**
 	 * 从request中读取请求参数Map（GET的或POST的）
 	 * @param request
 	 * @return
 	 */
-	public static Map<String, String> getParameterMapFromRequest(HttpServletRequest request) {
+	public static Map<String, Object> getParameterMapFromRequest(HttpServletRequest request) {
 		if (request.getMethod().equalsIgnoreCase("GET")) {
-			Map<String, String> paramMap = new HashMap<>();
+			Map<String, Object> paramMap = new HashMap<>();
 			Enumeration parameterNames = request.getParameterNames();
 			while (parameterNames.hasMoreElements()) {
 				String parameterName = (String) parameterNames.nextElement();
@@ -144,22 +146,10 @@ public class RequestUtil {
 		if (request.getMethod().equalsIgnoreCase("GET")) {
 			return request.getParameter(paramName);
 		} else if (request.getMethod().equalsIgnoreCase("POST")) {
-			Map<String, String> params = getParameterMapFromRequest(request);
+			Map<String, Object> params = getParameterMapFromRequest(request);
 			return (params != null && params.containsKey(paramName)) ? String.valueOf(params.get(paramName)) : null;
 		}
 		return null;
-	}
-
-	/**
-	 * 因为用流的方式读取POST参数只能读取一次，所以这里把参数提取出来放在request的一个attribute属性中，这样就可以重复读取了
-	 * @param request
-	 * @return
-	 */
-	public static HttpServletRequest extractParam(HttpServletRequest request) {
-		Map<String, String> paramMap = getParameterMapFromRequest(request);
-		HttpServletRequest request1 = request;
-		request1.setAttribute("paramMap", paramMap);
-		return request1;
 	}
 
 	/**
@@ -167,8 +157,8 @@ public class RequestUtil {
 	 * @param request 该request是经过提取参数的了
 	 * @return
 	 */
-	public static Map<String, String> getExtractedParamMapFromRequest(HttpServletRequest request) {
-		return (Map<String, String>)request.getAttribute("paramMap");
+	public static Map<String, Object> getExtractedParamMapFromRequest(HttpServletRequest request) {
+		return (Map<String, Object>)request.getAttribute("paramMap");
 	}
 
 	/**
@@ -181,9 +171,21 @@ public class RequestUtil {
 		if (request.getMethod().equalsIgnoreCase("GET")) {
 			return request.getParameter(paramName);
 		} else if (request.getMethod().equalsIgnoreCase("POST")) {
-			Map<String, String> params = getExtractedParamMapFromRequest(request);
+			Map<String, Object> params = getExtractedParamMapFromRequest(request);
 			return (params != null && params.containsKey(paramName)) ? String.valueOf(params.get(paramName)) : null;
 		}
 		return null;
+	}
+
+	/**
+	 * 因为用流的方式读取POST参数只能读取一次，所以这里把参数提取出来放在request的一个attribute属性中，这样就可以重复读取了
+	 * @param request
+	 * @return
+	 */
+	public static HttpServletRequest extractParam(HttpServletRequest request) {
+		Map<String, Object> paramMap = getParameterMapFromRequest(request);
+		HttpServletRequest request1 = request;
+		request1.setAttribute("paramMap", paramMap);
+		return request1;
 	}
 }
