@@ -38,7 +38,7 @@ public class UpmsSessionDao extends CachingSessionDAO {
     protected Serializable doCreate(Session session) {
         Serializable sessionId = generateSessionId(session);
         assignSessionId(session, sessionId);
-        RedisUtil.set(ZHENG_UPMS_SHIRO_SESSION_ID + "_" + sessionId, SerializableUtil.serialize(session), (int) session.getTimeout() / 1000);
+        RedisUtil.set(ZHENG_UPMS_SHIRO_SESSION_ID + "_" + sessionId, SerializableUtil.serializeSession(session), (int) session.getTimeout() / 1000);
         LOGGER.debug("doCreate >>>>> sessionId={}", sessionId);
         return sessionId;
     }
@@ -47,7 +47,7 @@ public class UpmsSessionDao extends CachingSessionDAO {
     protected Session doReadSession(Serializable sessionId) {
         String session = RedisUtil.get(ZHENG_UPMS_SHIRO_SESSION_ID + "_" + sessionId);
         LOGGER.debug("doReadSession >>>>> sessionId={}", sessionId);
-        return SerializableUtil.deserialize(session);
+        return SerializableUtil.deserializeSession(session);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class UpmsSessionDao extends CachingSessionDAO {
             upmsSession.setStatus(cacheUpmsSession.getStatus());
             upmsSession.setAttribute("FORCE_LOGOUT", cacheUpmsSession.getAttribute("FORCE_LOGOUT"));
         }
-        RedisUtil.set(ZHENG_UPMS_SHIRO_SESSION_ID + "_" + session.getId(), SerializableUtil.serialize(session), (int) session.getTimeout() / 1000);
+        RedisUtil.set(ZHENG_UPMS_SHIRO_SESSION_ID + "_" + session.getId(), SerializableUtil.serializeSession(session), (int) session.getTimeout() / 1000);
         // 更新ZHENG_UPMS_SERVER_SESSION_ID、ZHENG_UPMS_SERVER_CODE过期时间 TODO
         LOGGER.debug("doUpdate >>>>> sessionId={}", session.getId());
     }
@@ -126,7 +126,7 @@ public class UpmsSessionDao extends CachingSessionDAO {
                 total = total - 1;
                 continue;
             }
-             rows.add(SerializableUtil.deserialize(session));
+             rows.add(SerializableUtil.deserializeSession(session));
         }
         jedis.close();
         sessions.put("total", total);
@@ -144,10 +144,10 @@ public class UpmsSessionDao extends CachingSessionDAO {
         for (String sessionId : sessionIds) {
             // 会话增加强制退出属性标识，当此会话访问系统时，判断有该标识，则退出登录
             String session = RedisUtil.get(ZHENG_UPMS_SHIRO_SESSION_ID + "_" + sessionId);
-            UpmsSession upmsSession = (UpmsSession) SerializableUtil.deserialize(session);
+            UpmsSession upmsSession = (UpmsSession) SerializableUtil.deserializeSession(session);
             upmsSession.setStatus(UpmsSession.OnlineStatus.force_logout);
             upmsSession.setAttribute("FORCE_LOGOUT", "FORCE_LOGOUT");
-            RedisUtil.set(ZHENG_UPMS_SHIRO_SESSION_ID + "_" + sessionId, SerializableUtil.serialize(upmsSession), (int) upmsSession.getTimeout() / 1000);
+            RedisUtil.set(ZHENG_UPMS_SHIRO_SESSION_ID + "_" + sessionId, SerializableUtil.serializeSession(upmsSession), (int) upmsSession.getTimeout() / 1000);
         }
         return sessionIds.length;
     }
@@ -164,7 +164,7 @@ public class UpmsSessionDao extends CachingSessionDAO {
             return;
         }
         session.setStatus(onlineStatus);
-        RedisUtil.set(ZHENG_UPMS_SHIRO_SESSION_ID + "_" + session.getId(), SerializableUtil.serialize(session), (int) session.getTimeout() / 1000);
+        RedisUtil.set(ZHENG_UPMS_SHIRO_SESSION_ID + "_" + session.getId(), SerializableUtil.serializeSession(session), (int) session.getTimeout() / 1000);
     }
 
 }

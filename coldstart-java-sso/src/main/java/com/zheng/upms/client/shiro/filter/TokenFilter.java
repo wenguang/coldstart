@@ -5,7 +5,7 @@ import org.apache.shiro.web.filter.authc.AuthenticationFilter;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-public class RestAuthenticationFilter extends AuthenticationFilter {
+public class TokenFilter extends AuthenticationFilter {
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
         return true;
