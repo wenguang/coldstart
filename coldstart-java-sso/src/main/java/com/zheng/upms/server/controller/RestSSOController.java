@@ -4,6 +4,7 @@ import com.zheng.common.base.BaseController;
 import com.zheng.common.constant.UpmsResult;
 import com.zheng.common.constant.UpmsResultConstant;
 import com.zheng.common.util.RequestUtil;
+import com.zheng.upms.client.shiro.session.TokenManager;
 import com.zheng.upms.dao.model.UpmsUser;
 import com.zheng.upms.service.UpmsApiService;
 import com.zheng.upms.service.UpmsSystemService;
@@ -83,6 +84,7 @@ public class RestSSOController extends BaseController {
         Map ret = new HashMap();
         ret.put("id", upmsUser.getUserId());
         ret.put("username", upmsUser.getUsername());
+        ret.put("token", TokenManager.createAccessToken());
         return new UpmsResult(UpmsResultConstant.SUCCESS, ret);
     }
 }

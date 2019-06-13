@@ -15,8 +15,12 @@ public class ExtractFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest)servletRequest;
-        HttpServletRequest extractedRequest = RequestUtil.extractParam(request);
-        filterChain.doFilter(extractedRequest, servletResponse);
+        if (request.getMethod().equalsIgnoreCase("GET") || request.getMethod().equalsIgnoreCase("POST")) {
+            HttpServletRequest extractedRequest = RequestUtil.extractParam(request);
+            filterChain.doFilter(extractedRequest, servletResponse);
+        } else {
+            filterChain.doFilter(servletRequest, servletResponse);
+        }
     }
 
     @Override

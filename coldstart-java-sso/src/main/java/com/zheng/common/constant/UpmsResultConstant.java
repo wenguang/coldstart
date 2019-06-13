@@ -54,7 +54,12 @@ public enum UpmsResultConstant {
     /**
      * 没有访问权限
      */
-    NO_ACCESS_PERMISSION(10107, "No access permission");
+    NO_ACCESS_PERMISSION(10107, "No access permission"),
+
+    /**
+     * token失效
+     */
+    INVALID_TOKEN(10108, "Invalid token");
 
     public int code;
 

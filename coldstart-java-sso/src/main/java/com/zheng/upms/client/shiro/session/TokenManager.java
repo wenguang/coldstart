@@ -18,7 +18,7 @@ public class TokenManager {
         return accessTokenId;
     }
 
-    public static boolean updateAccessToken(String accessTokenId) {
+    public static boolean isTokenActive(String accessTokenId) {
         if (StringUtils.isBlank(accessTokenId)) {
             return false;
         }
@@ -31,6 +31,22 @@ public class TokenManager {
             RedisUtil.remove(accessTokenId);
             return false;
         }
+        return true;
+    }
+
+    public static boolean updateAccessToken(String accessTokenId) {
+        if (StringUtils.isBlank(accessTokenId)) {
+            return false;
+        }
+        String accessTokenStr = RedisUtil.get(accessTokenId);
+        if (StringUtils.isBlank(accessTokenStr)) {
+            return false;
+        }
+        AccessToken accessToken = SerializableUtil.deserializeAccessToken(accessTokenStr);
+//        if (accessToken.isExpired()) {
+//            RedisUtil.remove(accessTokenId);
+//            return false;
+//        }
         accessToken.updateStartTime();
         RedisUtil.set(accessTokenId, SerializableUtil.serializeAccessToken(accessToken));
         return true;
