@@ -12,7 +12,7 @@ import java.util.UUID;
 //@AllArgsConstructor
 public class AccessToken implements Serializable {
 
-    private final static long EXPIRE_TIME = 10 * 1000;
+    private final static long EXPIRE_TIME = 60 * 60 * 1000;
     private String token;
     private Long startTime;
 
