@@ -23,20 +23,20 @@
 
 
     <!-- DispatcherServlet上下文， 只管理@Controller类型的bean， 忽略其他型的bean, 如@Service -->
-    <context:component-scan base-package="com.zheng.upms.server.controller">
+    <context:component-scan base-package="com.dvs.rearend.server.controller">
     </context:component-scan>
 
     <!-- 日志记录AOP实现 -->
-    <bean class="com.zheng.upms.client.interceptor.LogAspect"/>
+    <!--<bean class="com.dvs.rearend.server.interceptor.LogAspect"/>-->
 
     <!-- MVC拦截器 -->
-    <mvc:interceptors>
-        <!-- 获取登录信息 -->
-        <mvc:interceptor>
-            <mvc:mapping path="/manage/**"/>
-            <bean class="com.zheng.upms.server.interceptor.RestInterceptor"></bean>
-        </mvc:interceptor>
-    </mvc:interceptors>
+    <!--<mvc:interceptors>-->
+        <!--&lt;!&ndash; 获取登录信息 &ndash;&gt;-->
+        <!--<mvc:interceptor>-->
+            <!--<mvc:mapping path="/manage/**"/>-->
+            <!--<bean class="com.dvs.rearend.server.interceptor.RestInterceptor"></bean>-->
+        <!--</mvc:interceptor>-->
+    <!--</mvc:interceptors>-->
 
     <!-- 返回ResponseBody响应类型 -->
     <mvc:annotation-driven>

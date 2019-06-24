@@ -17,14 +17,11 @@
         <property name="unauthorizedUrl" value="${zheng.upms.unauthorizedUrl}"/>
         <property name="filters">
             <util:map>
-                <entry key="cors" value-ref="corsShiroFilter"/>
-                <!--<entry key="authc" value-ref="upmsAuthenticationFilter"/>-->
                 <entry key="authc" value-ref="tokenFilter"/>
             </util:map>
         </property>
         <property name="filterChainDefinitions">
             <value>
-                <!--/manage/** = cors,authc-->
                 /manage/** = authc
                 /manage/index = user
                 /druid/** = user
@@ -35,8 +32,6 @@
         </property>
     </bean>
 
-    <!-- shiro跨域过滤器 -->
-    <bean id="corsShiroFilter" class="com.dvs.rearend.upms.client.shiro.filter.CORSShiroFilter"/>
     <!-- 重写authc过滤器 -->
     <bean id="upmsAuthenticationFilter" class="com.dvs.rearend.upms.client.shiro.filter.UpmsAuthenticationFilter"/>
     <!-- REST token authc过滤器 -->
