@@ -1,0 +1,29 @@
+package com.dvs.rearend.rpc.service.impl;
+
+import com.zheng.common.annotation.BaseService;
+import com.zheng.common.base.BaseServiceImpl;
+import com.dvs.rearend.dao.mapper.CmsMenuMapper;
+import com.dvs.rearend.dao.model.CmsMenu;
+import com.dvs.rearend.dao.model.CmsMenuExample;
+import com.dvs.rearend.rpc.api.CmsMenuService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+/**
+* CmsMenuService实现
+* Created by shuzheng on 2019/6/24.
+*/
+@Service
+@Transactional
+@BaseService
+public class CmsMenuServiceImpl extends BaseServiceImpl<CmsMenuMapper, CmsMenu, CmsMenuExample> implements CmsMenuService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CmsMenuServiceImpl.class);
+
+    @Autowired
+    CmsMenuMapper cmsMenuMapper;
+
+}
