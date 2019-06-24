@@ -1,11 +1,10 @@
-package com.dvs.rearend.rpc.service.impl;
+package com.dvs.rearend.service;
 
-import com.zheng.common.annotation.BaseService;
-import com.zheng.common.base.BaseServiceImpl;
+import com.dvs.rearend.common.annotation.BaseService;
+import com.dvs.rearend.common.base.BaseServiceImpl;
 import com.dvs.rearend.dao.mapper.CmsCategoryTagMapper;
 import com.dvs.rearend.dao.model.CmsCategoryTag;
 import com.dvs.rearend.dao.model.CmsCategoryTagExample;
-import com.dvs.rearend.rpc.api.CmsCategoryTagService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

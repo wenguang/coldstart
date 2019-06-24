@@ -1,6 +1,6 @@
-package com.dvs.rearend.rpc.api;
+package com.dvs.rearend.service;
 
-import com.zheng.common.base.BaseService;
+import com.dvs.rearend.common.base.BaseService;
 import com.dvs.rearend.dao.model.CmsTopic;
 import com.dvs.rearend.dao.model.CmsTopicExample;
 
