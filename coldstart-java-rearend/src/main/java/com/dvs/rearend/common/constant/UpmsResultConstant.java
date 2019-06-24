@@ -49,7 +49,7 @@ public enum UpmsResultConstant {
     /**
      * 会话过期
      */
-    INVALID_SESSION(10106, "Invalid session"),
+    INVALID_SESSION(10106, "Invalid token"),
 
     /**
      * 没有访问权限

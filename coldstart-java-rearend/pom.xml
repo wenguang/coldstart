@@ -77,7 +77,7 @@
       <artifactId>spring-security-config</artifactId>
       <version>${spring-security.version}</version>
     </dependency>
-    <!--spring-session-->
+    <!--spring-token-->
     <dependency>
       <groupId>org.springframework.session</groupId>
       <artifactId>spring-session-data-redis</artifactId>

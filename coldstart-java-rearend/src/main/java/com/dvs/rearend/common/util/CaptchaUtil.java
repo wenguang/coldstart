@@ -212,11 +212,11 @@ public class CaptchaUtil {
 //	 * 验证码
 //	 * @param request
 //	 * @param response
-//	 * @param session
+//	 * @param token
 //	 * @throws IOException
 //	 */
 //	@RequestMapping("/code.jpg")
-//	public void getCode3(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
+//	public void getCode3(HttpServletRequest request, HttpServletResponse response, HttpSession token) throws IOException {
 //		int width = NumberUtils.toInt(request.getParameter("width"), 100);
 //		int height = NumberUtils.toInt(request.getParameter("height"), 30);
 //		int codeCount = NumberUtils.toInt(request.getParameter("codeCount"), 4);
@@ -233,7 +233,7 @@ public class CaptchaUtil {
 //		response.setDateHeader("Expires", 0);
 //		// 自定义参数
 //		CaptchaUtil code = new CaptchaUtil(width, height, codeCount, lineCount);
-//		String sessionId = session.getId();
+//		String sessionId = token.getId();
 //		RedisUtil.set("captcha_" + sessionId, code.getCode(), 60 * 30);
 //		code.write(response.getOutputStream());
 //	}
