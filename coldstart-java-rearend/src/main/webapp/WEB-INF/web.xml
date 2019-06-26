@@ -46,7 +46,7 @@
   </filter>
   <filter-mapping>
     <filter-name>TokenFilter</filter-name>
-    <url-pattern>/*</url-pattern>
+    <url-pattern>/tag/*</url-pattern>
   </filter-mapping>
 
   <!-- HMAC API鉴权 filter -->

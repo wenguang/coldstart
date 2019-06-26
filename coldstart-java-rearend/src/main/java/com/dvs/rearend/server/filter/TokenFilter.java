@@ -10,8 +10,12 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 
 public class TokenFilter implements Filter {
+
+    private final static String SSO_LOGIN_URL = "http://localhost:8002";
+
     @Override
     public void init(FilterConfig filterConfig) {
 
@@ -26,7 +30,10 @@ public class TokenFilter implements Filter {
             if (TokenManager.isTokenActive(accessTokenId)) {
                 TokenManager.updateAccessToken(accessTokenId);
             } else {
-                UpmsResult ret = new UpmsResult(UpmsResultConstant.INVALID_TOKEN, "token失效");
+                HashMap map = new HashMap();
+                map.put("msg", "token失效");
+                map.put("redirectUrl", SSO_LOGIN_URL);
+                UpmsResult ret = new UpmsResult(UpmsResultConstant.INVALID_TOKEN, map);
                 ResponseUtil.returnTo(response, ret);
                 return;
             }

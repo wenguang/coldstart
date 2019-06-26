@@ -385,7 +385,7 @@
             <contextPath>/</contextPath>
           </webApp>
           <httpConnector>
-            <port>1112</port>
+            <port>1111</port>
           </httpConnector>
           <reload>automatic</reload>
         </configuration>
