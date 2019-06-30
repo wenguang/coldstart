@@ -17,6 +17,11 @@ public class AccessToken implements Serializable {
         this.startTime = Long.valueOf(System.currentTimeMillis());
     }
 
+    public AccessToken(String token, Long startTime) {
+        this.token = token;
+        this.startTime = startTime;
+    }
+
     public boolean isExpired() {
         synchronized (this.startTime) {
             long now = System.currentTimeMillis();

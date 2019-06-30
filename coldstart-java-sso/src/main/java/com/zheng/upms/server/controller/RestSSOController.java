@@ -4,6 +4,7 @@ import com.zheng.common.base.BaseController;
 import com.zheng.common.constant.UpmsResult;
 import com.zheng.common.constant.UpmsResultConstant;
 import com.zheng.common.util.RequestUtil;
+import com.zheng.upms.client.shiro.session.AccessToken;
 import com.zheng.upms.client.shiro.session.TokenManager;
 import com.zheng.upms.dao.model.UpmsUser;
 import com.zheng.upms.service.UpmsApiService;
@@ -86,5 +87,21 @@ public class RestSSOController extends BaseController {
         ret.put("username", upmsUser.getUsername());
         ret.put("token", TokenManager.createAccessToken());
         return new UpmsResult(UpmsResultConstant.SUCCESS, ret);
+    }
+
+    @ApiOperation(value = "验证token")
+    @RequestMapping(value = "/verify", method = RequestMethod.GET)
+    @ResponseBody
+    public Object verify(HttpServletRequest request, HttpServletResponse response) {
+        String token = RequestUtil.getExtractedParamFromRequest(request, "token");
+        if (StringUtils.isBlank(token)) {
+            return new UpmsResult(UpmsResultConstant.FAILED, "token不能为空");
+        }
+        if (!TokenManager.isTokenActive(token)) {
+            return new UpmsResult(UpmsResultConstant.INVALID_TOKEN, "token失效");
+        }
+        TokenManager.updateAccessToken(token);
+        AccessToken accessToken = TokenManager.getAccessToken(token);
+        return new UpmsResult(UpmsResultConstant.SUCCESS, accessToken);
     }
 }

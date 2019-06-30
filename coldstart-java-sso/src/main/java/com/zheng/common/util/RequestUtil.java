@@ -127,6 +127,7 @@ public class RequestUtil {
 					wholeStr += str;
 				}
 				if (StringUtils.isNotBlank(wholeStr)) {
+					System.out.println(wholeStr);
 					return JSON.parseObject(wholeStr, Map.class);
 				}
 			} catch (Exception e) {

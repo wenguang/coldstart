@@ -1,5 +1,6 @@
 package com.dvs.rearend.server.controller;
 
+import com.dvs.rearend.common.base.BaseController;
 import com.dvs.rearend.common.constant.UpmsResult;
 import com.dvs.rearend.common.constant.UpmsResultConstant;
 import com.dvs.rearend.dao.model.CmsTag;
@@ -17,7 +18,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/tag")
-public class CmsTagController {
+public class CmsTagController extends BaseController {
 
     @Autowired
     CmsTagService cmsTagService;

@@ -9,47 +9,70 @@ import org.slf4j.LoggerFactory;
 public class TokenManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenManager.class);
-    private static final String CS_ACCESS_TOKEN_ID = "CS_ACCESS_TOKEN_ID_";
+    private static final String SSO_ACCESS_TOKEN_ID_PREFIX = "SSO_ACCESS_TOKEN_ID_";
 
     public static String createAccessToken() {
         AccessToken accessToken = new AccessToken();
-        String accessTokenId = CS_ACCESS_TOKEN_ID + accessToken.getToken();
-        RedisUtil.set(accessTokenId, SerializableUtil.serializeAccessToken(accessToken));
-        return accessTokenId;
+        String token = accessToken.getToken();
+        RedisUtil.set(SSO_ACCESS_TOKEN_ID_PREFIX + token, SerializableUtil.serializeAccessToken(accessToken));
+        return token;
     }
 
-    public static boolean isTokenActive(String accessTokenId) {
-        if (StringUtils.isBlank(accessTokenId)) {
+    public static boolean setAccessToken(AccessToken accessToken) {
+        if (accessToken != null) {
+            String token = accessToken.getToken();
+            RedisUtil.set(SSO_ACCESS_TOKEN_ID_PREFIX + token, SerializableUtil.serializeAccessToken(accessToken));
+        }
+        return false;
+    }
+
+    public static void removeAccessToken(String token) {
+        RedisUtil.remove(SSO_ACCESS_TOKEN_ID_PREFIX + token);
+    }
+
+    public static boolean isTokenActive(String token) {
+        if (StringUtils.isBlank(token)) {
             return false;
         }
-        String accessTokenStr = RedisUtil.get(accessTokenId);
+        String accessTokenStr = RedisUtil.get(SSO_ACCESS_TOKEN_ID_PREFIX + token);
         if (StringUtils.isBlank(accessTokenStr)) {
             return false;
         }
         AccessToken accessToken = SerializableUtil.deserializeAccessToken(accessTokenStr);
         if (accessToken.isExpired()) {
-            RedisUtil.remove(accessTokenId);
+            RedisUtil.remove(SSO_ACCESS_TOKEN_ID_PREFIX + token);
             return false;
         }
         return true;
     }
 
-    public static boolean updateAccessToken(String accessTokenId) {
-        if (StringUtils.isBlank(accessTokenId)) {
+    public static boolean updateAccessToken(String token) {
+        if (StringUtils.isBlank(token)) {
             return false;
         }
-        String accessTokenStr = RedisUtil.get(accessTokenId);
+        String accessTokenStr = RedisUtil.get(SSO_ACCESS_TOKEN_ID_PREFIX + token);
         if (StringUtils.isBlank(accessTokenStr)) {
             return false;
         }
         AccessToken accessToken = SerializableUtil.deserializeAccessToken(accessTokenStr);
 //        if (accessToken.isExpired()) {
-//            RedisUtil.remove(accessTokenId);
+//            RedisUtil.remove(SSO_ACCESS_TOKEN_ID_PREFIX + token);
 //            return false;
 //        }
         accessToken.updateStartTime();
-        RedisUtil.set(accessTokenId, SerializableUtil.serializeAccessToken(accessToken));
+        RedisUtil.set(SSO_ACCESS_TOKEN_ID_PREFIX + token, SerializableUtil.serializeAccessToken(accessToken));
         return true;
     }
 
+    public static AccessToken getAccessToken(String token) {
+        if (StringUtils.isBlank(token)) {
+            return null;
+        }
+        String accessTokenStr = RedisUtil.get(SSO_ACCESS_TOKEN_ID_PREFIX + token);
+        if (StringUtils.isBlank(accessTokenStr)) {
+            return null;
+        }
+        AccessToken accessToken = SerializableUtil.deserializeAccessToken(accessTokenStr);
+        return accessToken;
+    }
 }
